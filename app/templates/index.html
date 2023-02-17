@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static %}
+{% block loader_js_bottom %}
+<script src="{% static 'js/index.js' %}"></script>
+{% endblock %}
+{% block content_body %}
+<style>
+    button.page-link {
+        color: unset
+    }
+
+    li.page-item.disabled {
+        cursor: not-allowed;
+    }
+
+    #list_body {
+        text-align: center;
+    }
+
+    .btn-block {
+        width: 100%;
+    }
+
+    div#form {
+        border-top: 2px solid lightgray;
+        padding-top: 10px;
+    }
+
+    div#request_section div.form-row {
+        margin-bottom: 10px;
+    }
+</style>
+<div class="container" style="padding-top: 8rem;padding-bottom: 5rem;">
+    <div class="row">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="text-center">
+                    <th>#</th>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="list_body">
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <nav>
+            <ul id="pagination" class="pagination justify-content-center">
+            </ul>
+          </nav>
+    </div>
+
+    <div id="form">
+        <div class="row">
+            <div class="col-sm-3">
+                <button id="get_button" onclick="setRequestMode(this)" class="btnOptions btn btn-block btn-outline-success" aria-pressed="true">
+                    GET
+                </button>
+            </div>
+            <div class="col-sm-3">
+                <button onclick="setRequestMode(this)" class="btnOptions btn btn-block btn-outline-success" aria-pressed="true">
+                    POST
+                </button>
+            </div>
+            <div class="col-sm-3">
+                <button onclick="setRequestMode(this)" class="btnOptions btn btn-block btn-outline-success" aria-pressed="true">
+                    PUT
+                </button>
+            </div>
+            <div class="col-sm-3">
+                <button onclick="setRequestMode(this)" class="btnOptions btn btn-block btn-outline-success" aria-pressed="true">
+                    DELETE
+                </button>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-sm-6">
+                <div id="request_section">
+                    <div id="form_id" class="form-row request_forms">
+                        <div class="col">
+                            <input type="text" id="input_id" class="form-control form-input" placeholder="Enter ID">
+                        </div>
+                    </div>
+                    <div id="form_username" class="form-row request_forms">
+                        <div class="col">
+                            <input type="text" id="input_username" class="form-control form-input" placeholder="Enter username">
+                        </div>
+                    </div>
+                    <div id="form_first_name" class="form-row request_forms">
+                        <div class="col">
+                            <input type="text" id="input_first_name" class="form-control form-input" placeholder="Enter firstname">
+                        </div>
+                    </div>
+                    <div id="form_last_name" class="form-row request_forms">
+                        <div class="col">
+                            <input type="text" id="input_last_name" class="form-control form-input" placeholder="Enter lastname">
+                        </div>
+                    </div>
+                    <div id="form_email" class="form-row request_forms">
+                        <div class="col">
+                            <input type="text" id="input_email" class="form-control form-input" placeholder="Enter email">
+                        </div>
+                    </div>
+                    <div class="form-row text-center">
+                        <button class="btn btn-primary" onclick="pre_submit()">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" style="min-height:100px; background: lightgray; padding:5px">
+                <pre id="response_section"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="remove_user_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+            <h4 class="modal-title text-danger"></h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <b class="fs-5 fw-lighter" id="remove_modal_label"></b>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+            <button type="button" id="remove_user" class="btn btn-warning" onclick="submit()">Continue</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
