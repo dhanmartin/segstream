@@ -1,0 +1,2 @@
+# segstream
+Segstream Coding Assignment
