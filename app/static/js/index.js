@@ -1,18 +1,19 @@
 var request_mode = "GET";
 var current_page = 1;
-var active_modal;
+var active_modal = undefined;
 
 function init() {
+    set_active_menu("home");
     loadList(current_page);
     setRequestMode(document.getElementById("get_button"))
 }
 
 function loadList(page) {
-    executeRequest("lists/"+page+"/", {}, "GET")
+    ajaxRequest("lists/"+page+"/", {}, "GET")
     .then(data => {
         current_page = page
         updateTableRows(data.records)
-        updatePagination(data.pagination)
+        updatePagination(data.pagination, "loadList")
     })
 }
 
@@ -28,73 +29,6 @@ function updateTableRows(records) {
         rows.push(tds.join(""))
     }
     el.innerHTML = rows.join("")
-}
-
-function updatePagination(pagination) {
-    let el = document.getElementById("pagination")
-    let buttons = []
-    buttons.push(buildPaginationButton(pagination.current, "Previous", pagination.current-1, !pagination.has_previous))
-    for (let page of pagination.page_ranges) {
-        buttons.push(buildPaginationButton(pagination.current, page, page))
-    }
-    buttons.push(buildPaginationButton(pagination.current, "Next", pagination.current+1, !pagination.has_next))
-    el.innerHTML = buttons.join("")
-}
-
-function buildPaginationButton(current, label, page, disabled) {
-    let active = current == page ? 'active' : '';
-    let disabled_button = disabled ? 'disabled' : '';
-    let onclick = !active ? `onclick="loadList(${page})"` : ''
-    let tmpl = `<li class="page-item ${disabled_button} ${active}">
-        <button class="page-link" ${onclick}>${label}</button>
-    </li>`;
-    return tmpl
-}
-
-function executeRequest(url, data, method="POST") {
-    setup = {
-        "method": method,
-        "credentials": 'same-origin',
-        "headers": {
-            'Accept': 'application/json',
-            'X-CSRFToken': this.getCookie('csrftoken'),
-        },
-    }
-    if (method == "POST") {
-        setup["body"] = JSON.stringify(data)
-    }
-
-    return fetch(url, setup).then(async response => {
-        if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(text)
-            })
-        }
-
-        try{
-            data = await response.clone().json()
-        }
-        catch(err) {
-            data = await response.clone().text()
-        }
-
-        return data
-    })
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
 }
 
 function setRequestMode(el) {
@@ -161,7 +95,10 @@ function pre_submit() {
 }
 
 function submit() {
-    active_modal.hide()
+    if (active_modal) {
+        active_modal.hide()
+        active_modal = undefined
+    }
 
     let fields = getAvailableFields()
     data = {}
@@ -174,7 +111,7 @@ function submit() {
     let url = `submit/${request_mode.toLocaleLowerCase()}/`
     let result = `${request_mode} RESULT\n`
     let has_error = false
-    executeRequest(url, data, "POST")
+    ajaxRequest(url, data, "POST")
     .then(data => {
         try{
             result = `${result}${JSON.stringify(data, undefined, 2)}`

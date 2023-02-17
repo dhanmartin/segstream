@@ -1,0 +1,26 @@
+<style>
+button.page-link {
+    color: unset
+}
+
+li.page-item.disabled {
+    cursor: not-allowed;
+}
+
+#list_body {
+    text-align: center;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+div#form {
+    border-top: 2px solid lightgray;
+    padding-top: 10px;
+}
+
+div#request_section div.form-row {
+    margin-bottom: 10px;
+}
+</style>
